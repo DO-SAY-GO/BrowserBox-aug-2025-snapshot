@@ -16,11 +16,19 @@ if [[ -z "$LICENSE_KEY" ]]; then
 fi
 export LICENSE_KEY="${LICENSE_KEY}"
 
+if [[ -z "$INSTALL_DOC_VIEWER" ]]; then
+  echo "[ Warning ]: Install doc viewer is not set for tests. Setting..." >&2
+  INSTALL_DOC_VIEWER="false"
+fi
+export INSTALL_DOC_VIEWER="${INSTALL_DOC_VIEWER}"
+
 # Safely handle bbcertify output
 if command -v bbcertify; then
-  cert_file=$(bbcertify)
+  cert_file=$(bbcertify --no-reservation)
+  reservation_file="${HOME}/.config/dosyago/bbpro/tickets/reservation.json"
   if [ $? -eq 0 ] && [ -n "$cert_file" ] && [ -f "$cert_file" ]; then
-    rm "$cert_file"
+    rm -f "$cert_file"
+    rm -f "$reservation_file"
   else
     echo "Warning: bbcertify failed or no file to remove" >&2
   fi
